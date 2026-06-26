@@ -1,4 +1,4 @@
-# src/omega_mcp/core/logger.py
+# src/omega_mcp/logger.py
 import logging
 import sys
 

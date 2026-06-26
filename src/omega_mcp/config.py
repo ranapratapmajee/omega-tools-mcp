@@ -1,7 +1,7 @@
-# src/omega_mcp/core/config.py
+# filepath: src/omega_mcp/config.py
 import os
 from dataclasses import dataclass, field
-from omega_mcp.core.logger import logger
+from omega_mcp.logger import logger  # Clean root-level import now
 
 @dataclass(frozen=True)
 class GlobalSettings:
@@ -13,8 +13,6 @@ class GlobalSettings:
 class WebSearchToolSettings:
     """Configuration grouped explicitly for the Web Search & Scraping tools."""
     MAX_RESULTS: int = int(os.getenv("OMEGA_SEARCH_MAX_RESULTS", "5"))
-    # Add future key mappings here if you change providers
-    # BRAVE_API_KEY: str | None = os.getenv("OMEGA_BRAVE_API_KEY")
 
     def validate(self) -> bool:
         if self.MAX_RESULTS <= 0:
@@ -24,14 +22,26 @@ class WebSearchToolSettings:
 
 @dataclass(frozen=True)
 class DatabaseToolSettings:
-    """Configuration grouped explicitly for your future Database query tools."""
-    DB_URI: str | None = os.getenv("OMEGA_DATABASE_URI")
-    POOL_SIZE: int = int(os.getenv("OMEGA_DB_POOL_SIZE", "5"))
+    """Configuration grouped explicitly for your Neo4j and ChromaDB network services."""
+    # Neo4j Parameters
+    NEO4J_URI: str = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+    NEO4J_USER: str = os.getenv("NEO4J_USER", "neo4j")
+    NEO4J_PASSWORD: str = os.getenv("NEO4J_PASSWORD", "your_secure_password")
+    
+    # ChromaDB Network Client Parameters
+    CHROMA_HOST: str = os.getenv("CHROMA_HOST", "localhost")
+    CHROMA_PORT: int = int(os.getenv("CHROMA_PORT", "8000"))
+
+    def validate(self) -> bool:
+        if not self.NEO4J_URI or not self.NEO4J_PASSWORD:
+            logger.warning("⚠️ Database credentials missing or unassigned in environment definitions.")
+        return True
 
 @dataclass(frozen=True)
 class FileSystemToolSettings:
     """Configuration grouped explicitly for local filesystem operations."""
     ALLOWED_ROOT_DIR: str = os.getenv("OMEGA_ALLOWED_ROOT", "/")
+
 
 # --- Master Settings Orchestrator ---
 
@@ -46,8 +56,8 @@ class Settings:
     def validate_all(self) -> bool:
         """Triggers component level validations at boot time."""
         return all([
-            self.web.validate()
-            # Add other tool validations here as you build them out
+            self.web.validate(),
+            self.db.validate()
         ])
 
 # Create a singleton instance to import across modules

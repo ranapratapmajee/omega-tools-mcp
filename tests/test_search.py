@@ -1,6 +1,6 @@
 # test_search.py
 import asyncio
-from omega_mcp.tools.web import search_the_web
+from omega_mcp.tools.web_search import search_the_web
 
 async def test():
     print("Testing Omega Web Search Client...")
