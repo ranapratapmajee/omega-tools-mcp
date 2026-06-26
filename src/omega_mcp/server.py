@@ -3,11 +3,14 @@ from mcp.server.fastmcp import FastMCP
 from omega_mcp.tools.web import search_the_web
 from omega_mcp.core.logger import logger
 
-# 1. Initialize the central Omega engine
-mcp = FastMCP("Omega-Universal-Tools")
+# Initialize the central Omega engine
+mcp = FastMCP("Omega-MCP-Tools")
 
-# 2. Register our web search tool
-mcp.tool(name="omega_web_search")(search_the_web)
+# Tools
+@mcp.tool(name="web_search")
+def web_search(query: str) -> str:
+    """Executes a live internet query to gather current website contents."""
+    return search_the_web(query)
 
 def main():
     logger.info("Initializing Omega MCP Engine via standard Stdio transport...")
