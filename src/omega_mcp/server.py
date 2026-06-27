@@ -10,14 +10,17 @@ mcp = FastMCP("Omega-MCP-Tools")
 
 # Tools ------------------------------------------------------------------------
 @mcp.tool(name="web_search")
-def web_search(query: str) -> str:
+async def web_search(query: str) -> str:
     """Executes a live internet query to gather current website contents."""
-    return search_the_web(query)
+    return await search_the_web(query)
 
-# @mcp.tool(name="hybrid_kg_vector_search")
-# def hybrid_kg_vector_search(query: str) -> str:
-#     """Executes a hybrid graph search to gather answer for user query"""
-#     return execute_hybrid_rsf_graph_rag(query)
+@mcp.tool(name="hybrid_kg_vector_search")
+async def hybrid_kg_vector_search(query: str) -> str:
+    """
+    Performs a dual-engine semantic vector and full-text keyword search 
+    fused via relative scoring algorithms across Neo4j and Chroma DB.
+    """
+    return await execute_hybrid_rsf_graph_rag(query)
 
 # --------------------------------------------------------------------------------
 def main():

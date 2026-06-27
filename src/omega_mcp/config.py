@@ -31,6 +31,10 @@ class DatabaseToolSettings:
     # ChromaDB Network Client Parameters
     CHROMA_HOST: str = os.getenv("CHROMA_HOST", "localhost")
     CHROMA_PORT: int = int(os.getenv("CHROMA_PORT", "8000"))
+    CHROMA_COLLECTION: str = os.getenv("CHROMA_COLLECTION","nexus_knowledge_pool")
+
+    LOCAL_LLM_URL: str = os.getenv("LOCAL_LLM_URL", "http://localhost:11434")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "nomic-embed-text")
 
     def validate(self) -> bool:
         if not self.NEO4J_URI or not self.NEO4J_PASSWORD:
