@@ -1,23 +1,36 @@
-# Use a lightweight, official Python image
-FROM python:3.12-slim
+# filepath: ./Dockerfile
+FROM python:3.11-slim-bookworm
 
-# Install uv directly into the container from its official image distribution
+# Install uv directly from the official optimized image distribution
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Set the working execution directory inside the container
+# Set production execution workspace directory
 WORKDIR /app
 
-# 🛠️ Fix: Add README.md here so Hatchling can find it during sync!
-COPY pyproject.toml uv.lock README.md ./
+# Enable bytecode compilation for rapid application startup speed
+ENV UV_COMPILE_BYTECODE=1
+# Stop python from writing ephemeral .pyc clutter onto container disk layers
+ENV PYTHONDONTWRITEBYTECODE=1
+# Force stream tracing logs to unbuffered mode to instantly pipe stderr to Docker metrics
+ENV PYTHONUNBUFFERED=1
 
-# Synchronize dependencies strictly matching your local lockfile setup
-RUN uv sync --frozen --no-cache
+# Copy project package configurations first to preserve cache layers optimally
+COPY pyproject.toml uv.lock ./
 
-# Copy your src module folder into the container workspace
-COPY src/ ./src/
+# Synchronize virtual env configurations globally directly into base system framework layers
+RUN uv pip install --system -r pyproject.toml
 
-# Expose the internal container port 8000
+# Copy the decoupled core modules and tool structures into active container matrix
+COPY src/ /app/src/
+
+# Expose internal runtime container networking port
 EXPOSE 8000
 
-# Fire up the engine running the web-based Server-Sent Events (SSE) protocol
-CMD ["uv", "run", "src/omega_mcp/server.py", "--transport", "sse", "--host", "0.0.0.0", "--port", "8000"]
+# Set baseline infrastructure defaults (can be modified inside docker-compose)
+ENV MCP_TRANSPORT=sse
+ENV MCP_HOST=0.0.0.0
+ENV MCP_PORT=8000
+ENV PYTHONPATH=/app/src
+
+# Invoke the application layer entry point via the standard python runtime engine
+CMD ["python", "src/omega_mcp/server.py"]

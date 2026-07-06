@@ -1,3 +1,4 @@
+# filepath: ./pyproject.toml
 [project]
 name = "omega-tools-mcp"
 version = "0.1.0"
@@ -5,22 +6,19 @@ description = "Universal MCP Server Core Toolkit"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "mcp[cli]>=1.2.0",
+    "mcp[cli]>=1.2.1",
     "ddgs>=1.0.0",
     "httpx>=0.27.0",
-    "neo4j>=5.0.0",
-    "chromadb>=0.5.0",
-    "beautifulsoup4>=4.12.0",
-    "bs4>=0.0.2",
-    "trafilatura>=2.1.0",
+    "neo4j>=5.21.0",
+    "chromadb>=0.5.3",
+    "beautifulsoup4>=4.12.3",
+    "trafilatura>=1.12.0",
 ]
 
 [tool.uv]
-package = true
+# Toggles the project from package distribution mode to direct application workspace mode
+package = false
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/omega_mcp"]
